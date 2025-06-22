@@ -13,7 +13,7 @@ public class AuthConstant {
 
     public static final String JWKS_URL = "/.well-known/jwks.json";
 
-    public static final String CLIENT_ID = "4lcfgcumiu5derbjmd2fm1io34";
+    public static final String CLIENT_ID_VALUE = "4lcfgcumiu5derbjmd2fm1io34";
 
     public static final String AUTHORIZATION_HEADER = "authorization";
 
@@ -22,6 +22,12 @@ public class AuthConstant {
     public static final String IS_AUTHORIZED_KEY = "isAuthorized";
 
     public static final String COGNITO_GROUPS = "cognito:groups";
+
+    public static final String CLAIM_TOKEN_USE = "token_use";
+
+    public static final String CLAIM_CLIENT_ID = "client_id";
+
+    public static final String CLAIM_TOKEN_USE_VALUE = "access";
 
     public static final Map<String,List<String>> ACCESS_MATRIX;
     static {
