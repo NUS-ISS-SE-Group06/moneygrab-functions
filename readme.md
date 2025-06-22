@@ -3,3 +3,7 @@ This is a monorepo that contains all the Lambda functions, and they are organize
 
 To compile the code, you can use the following command:
     "mvn clean package -pl auth-lambda"
+
+Lambda Role - lambda-jwt-authorizer-role has been created with the following policies:
+    AWSLambdaBasicExecutionRole
+
