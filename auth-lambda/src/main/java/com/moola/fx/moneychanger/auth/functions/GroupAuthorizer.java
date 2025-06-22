@@ -50,9 +50,22 @@ public class GroupAuthorizer
 
             // --- Verify signature, issuer, audience, expiry ---
             JWTClaimsSet claims = JWT_PROC.process(token, null);
-            if (!AuthConstant.ISSUER.equals(claims.getIssuer())
-                    || !claims.getAudience().contains(AuthConstant.CLIENT_ID)
-                    || new Date().after(claims.getExpirationTime())) {
+            String tokenIssuer = claims.getIssuer();
+            String tokenUse = claims.getStringClaim(AuthConstant.CLAIM_TOKEN_USE);
+            Date expiry = claims.getExpirationTime();
+            // Cognito access tokens have no “aud”, but do have “client_id”
+            String tokenClientId = claims.getStringClaim(AuthConstant.CLAIM_CLIENT_ID);
+
+            ctx.getLogger().log("claims: "+claims);
+            ctx.getLogger().log("claims: tokenIssuer - "+tokenIssuer);
+            ctx.getLogger().log("claims: tokenUse - "+tokenUse);
+            ctx.getLogger().log("claims: expiry - "+expiry);
+
+            // reject if issuer wrong, not an access token, wrong client_id, or expired
+            if (!AuthConstant.ISSUER.equals(tokenIssuer)
+                    || !AuthConstant.CLAIM_TOKEN_USE_VALUE.equals(tokenUse)
+                    || !AuthConstant.CLIENT_ID_VALUE.equals(tokenClientId)
+                    || new Date().after(expiry)) {
                 ctx.getLogger().log("Token Validation failed");
                 response.put(AuthConstant.IS_AUTHORIZED_KEY, false);
                 return response;
