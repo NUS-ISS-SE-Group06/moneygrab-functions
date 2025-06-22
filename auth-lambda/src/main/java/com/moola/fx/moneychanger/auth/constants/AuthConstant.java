@@ -53,6 +53,9 @@ public class AuthConstant {
         // CURRENCIES
         m.put("GET#/api/v1/currencies", List.of("MoneyChangerAdmin", "MoneyChangerStaff"));
 
+        // HEALTH CHECK
+        m.put("GET#/api/actuator/health", List.of("MoneyGrabAdmin", "MoneyGrabStaff", "MoneyChangerAdmin", "MoneyChangerStaff"));
+
         ACCESS_MATRIX = Collections.unmodifiableMap(m);
     }
 
