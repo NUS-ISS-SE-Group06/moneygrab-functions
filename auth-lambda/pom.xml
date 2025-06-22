@@ -57,7 +57,7 @@
                             <transformers>
                                 <!-- now your mainClass manifest is the only one applied -->
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.moola.fx.moneychanger.functions.auth.GroupAuthorizer</mainClass>
+                                    <mainClass>com.moola.fx.moneychanger.auth.functions.GroupAuthorizer</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
