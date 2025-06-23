@@ -101,5 +101,5 @@ jobs:
     steps:
       - name:  SonarCloud Analysis
         run: |
-            echo "Automatic Analysis result: https://sonarcloud.io/project/overview?id=NUS-ISS-SE-Group06_moenygrab-functions
+            echo "Automatic Analysis result: https://sonarcloud.io/project/overview?id=NUS-ISS-SE-Group06_moenygrab-functions"
 
