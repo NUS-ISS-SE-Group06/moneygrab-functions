@@ -19,17 +19,24 @@ import java.util.*;
 public class GroupAuthorizer
         implements RequestHandler<APIGatewayV2CustomAuthorizerEvent, Map<String,Object>> {
 
-    // Build the JWT processor with JWKSourceBuilder
-    private static final ConfigurableJWTProcessor<SecurityContext> JWT_PROC;
-    static {
+    private final ConfigurableJWTProcessor<SecurityContext> jwtProcessor;
+
+    public GroupAuthorizer() {
+        this.jwtProcessor = buildDefaultProcessor();
+    }
+
+    // package-private constructor for tests
+    GroupAuthorizer(ConfigurableJWTProcessor<SecurityContext> jwtProcessor) {
+        this.jwtProcessor = jwtProcessor;
+    }
+
+    private static ConfigurableJWTProcessor<SecurityContext> buildDefaultProcessor() {
         try {
-            JWT_PROC = new DefaultJWTProcessor<>();
-            URL jwkSetUrl = new URL(AuthConstant.ISSUER + AuthConstant.JWKS_URL);
-            JWKSource<SecurityContext> jwkSource =
-                    JWKSourceBuilder.create(jwkSetUrl).build();
-            JWT_PROC.setJWSKeySelector(
-                    new JWSVerificationKeySelector<>(JWSAlgorithm.RS256, jwkSource)
-            );
+            DefaultJWTProcessor<SecurityContext> proc = new DefaultJWTProcessor<>();
+            URL jwkUrl = new URL(AuthConstant.ISSUER + AuthConstant.JWKS_URL);
+            JWKSource<SecurityContext> src = JWKSourceBuilder.create(jwkUrl).build();
+            proc.setJWSKeySelector(new JWSVerificationKeySelector<>(JWSAlgorithm.RS256, src));
+            return proc;
         } catch (Exception e) {
             throw new RuntimeException("Failed to initialize JWT processor", e);
         }
@@ -49,7 +56,7 @@ public class GroupAuthorizer
             ctx.getLogger().log("Processing Tokens");
 
             // --- Verify signature, issuer, audience, expiry ---
-            JWTClaimsSet claims = JWT_PROC.process(token, null);
+            JWTClaimsSet claims = jwtProcessor.process(token, null);
             String tokenIssuer = claims.getIssuer();
             String tokenUse = claims.getStringClaim(AuthConstant.CLAIM_TOKEN_USE);
             Date expiry = claims.getExpirationTime();
