@@ -1,0 +1,26 @@
+# template.yml
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: MoneyGrab Mono-Repo Lambda Functions
+
+Globals:
+  Function:
+    Runtime: java21
+    Timeout: 10   # seconds
+    MemorySize: 512
+
+Resources:
+  AuthLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: GroupAuthorizer
+      Handler: com.moola.fx.moneychanger.auth.functions.GroupAuthorizer::handleRequest
+      CodeUri: auth-lambda/target/auth-lambda-1.0.0-SNAPSHOT.jar
+      Role: arn:aws:iam::797226340575:role/lambda-jwt-authorizer-role
+      # Note: no Events here—you can attach this as a Custom Authorizer
+      # in API Gateway separately, or add an Api event mapping if you want.
+
+Outputs:
+  AuthLambdaArn:
+    Description: ARN of the Auth Lambda
+    Value: !GetAtt AuthLambdaFunction.Arn
