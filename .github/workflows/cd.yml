@@ -1,5 +1,4 @@
-# .github/workflows/cd.yml
-name: CI/CD — Auth Lambda
+name: CD — Auth Lambda
 
 on:
   push:
@@ -17,7 +16,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 11
+      - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
           distribution: temurin
@@ -26,8 +25,10 @@ jobs:
       - name: Build auth-lambda JAR
         run: mvn clean package -pl auth-lambda -am -DskipTests
 
-      - name: Install AWS SAM CLI
-        run: sudo pip install aws-sam-cli
+      - name: Install AWS SAM CLI via apt
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y aws-sam-cli
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
