@@ -35,24 +35,35 @@ public class AuthConstant {
         // MONEY CHANGER OPERATIONS
         m.put("GET#/api/v1/money-changers", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
         m.put("POST#/api/v1/money-changers", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
+        m.put("GET#/api/v1/money-changers/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
         m.put("PUT#/api/v1/money-changers/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
         m.put("DELETE#/api/v1/money-changers/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
+
+        // MONEY CHANGER CURRENCIES
+        m.put("GET#/api/v1/money-changers-currencies", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
+        m.put("POST#/api/v1/money-changers-currencies", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
+        m.put("GET#/api/v1/money-changers-currencies/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
+        m.put("PUT#/api/v1/money-changers-currencies/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
+        m.put("DELETE#/api/v1/money-changers-currencies/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
 
         // SCHEMES
         m.put("GET#/api/v1/schemes", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
         m.put("POST#/api/v1/schemes", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
+        m.put("GET#/api/v1/schemes/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
         m.put("PUT#/api/v1/schemes/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
         m.put("DELETE#/api/v1/schemes/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
 
         // COMMISSION RATES
         m.put("GET#/api/v1/commission-rates", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
         m.put("POST#/api/v1/commission-rates", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
+        m.put("GET#/api/v1/commission-rates/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
         m.put("PUT#/api/v1/commission-rates/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
         m.put("DELETE#/api/v1/commission-rates/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
 
         // COMPANY COMMISSION SCHEMES
         m.put("GET#/api/v1/company-commission-schemes", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
         m.put("POST#/api/v1/company-commission-schemes", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
+        m.put("GET#/api/v1/company-commission-schemes/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
         m.put("PUT#/api/v1/company-commission-schemes/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
         m.put("DELETE#/api/v1/company-commission-schemes/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
 
