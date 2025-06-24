@@ -133,8 +133,7 @@
                                             <counter>INSTRUCTION</counter>
                                             <value>COVEREDRATIO</value>
                                             <!-- set your minimum coverage ratio here -->
-                                            <!-- FIXME INCREASE CODE COVERAGE TO 80% -->
-                                            <minimum>0.75</minimum>
+                                            <minimum>0.90</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
