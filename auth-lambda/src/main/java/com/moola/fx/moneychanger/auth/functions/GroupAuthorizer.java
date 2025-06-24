@@ -94,7 +94,7 @@ public class GroupAuthorizer
             response.put(AuthConstant.IS_AUTHORIZED_KEY, allowed);
 
         } catch (Exception e) {
-            ctx.getLogger().log("Auth failure: " + e);
+            ctx.getLogger().log("Auth failure: " + e.getMessage());
             response.put(AuthConstant.IS_AUTHORIZED_KEY, false);
         }
         return response;
