@@ -28,50 +28,60 @@ public class AuthConstant {
     public static final String CLAIM_CLIENT_ID = "client_id";
 
     public static final String CLAIM_TOKEN_USE_VALUE = "access";
+    
+    public static final String GROUP_MONEY_GRAB_ADMIN = "MoneyGrabAdmin";
+
+    public static final String GROUP_MONEY_GRAB_STAFF = "MoneyGrabStaff";
+
+    public static final String GROUP_MONEY_CHANGER_ADMIN = "MoneyChangerAdmin";
+
+    public static final String GROUP_MONEY_CHANGER_STAFF = "MoneyChangerStaff";
+
+    public static final String GROUP_CUSTOMER = "Customer";
 
     public static final Map<String,List<String>> ACCESS_MATRIX;
     static {
         Map<String,List<String>> m = new HashMap<>();
         // MONEY CHANGER OPERATIONS
-        m.put("GET#/api/v1/money-changers", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
-        m.put("POST#/api/v1/money-changers", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
-        m.put("GET#/api/v1/money-changers/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
-        m.put("PUT#/api/v1/money-changers/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
-        m.put("DELETE#/api/v1/money-changers/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
+        m.put("GET#/api/v1/money-changers", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
+        m.put("POST#/api/v1/money-changers", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
+        m.put("GET#/api/v1/money-changers/{id}", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
+        m.put("PUT#/api/v1/money-changers/{id}", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
+        m.put("DELETE#/api/v1/money-changers/{id}", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
 
         // MONEY CHANGER CURRENCIES
-        m.put("GET#/api/v1/money-changers-currencies", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
-        m.put("POST#/api/v1/money-changers-currencies", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
-        m.put("GET#/api/v1/money-changers-currencies/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
-        m.put("PUT#/api/v1/money-changers-currencies/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
-        m.put("DELETE#/api/v1/money-changers-currencies/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
+        m.put("GET#/api/v1/money-changers-currencies", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
+        m.put("POST#/api/v1/money-changers-currencies", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
+        m.put("GET#/api/v1/money-changers-currencies/{id}", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
+        m.put("PUT#/api/v1/money-changers-currencies/{id}", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
+        m.put("DELETE#/api/v1/money-changers-currencies/{id}", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
 
         // SCHEMES
-        m.put("GET#/api/v1/schemes", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
-        m.put("POST#/api/v1/schemes", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
-        m.put("GET#/api/v1/schemes/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
-        m.put("PUT#/api/v1/schemes/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
-        m.put("DELETE#/api/v1/schemes/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
+        m.put("GET#/api/v1/schemes", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
+        m.put("POST#/api/v1/schemes", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
+        m.put("GET#/api/v1/schemes/{id}", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
+        m.put("PUT#/api/v1/schemes/{id}", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
+        m.put("DELETE#/api/v1/schemes/{id}", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
 
         // COMMISSION RATES
-        m.put("GET#/api/v1/commission-rates", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
-        m.put("POST#/api/v1/commission-rates", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
-        m.put("GET#/api/v1/commission-rates/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
-        m.put("PUT#/api/v1/commission-rates/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
-        m.put("DELETE#/api/v1/commission-rates/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
+        m.put("GET#/api/v1/commission-rates", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
+        m.put("POST#/api/v1/commission-rates", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
+        m.put("GET#/api/v1/commission-rates/{id}", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
+        m.put("PUT#/api/v1/commission-rates/{id}", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
+        m.put("DELETE#/api/v1/commission-rates/{id}", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
 
         // COMPANY COMMISSION SCHEMES
-        m.put("GET#/api/v1/company-commission-schemes", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
-        m.put("POST#/api/v1/company-commission-schemes", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
-        m.put("GET#/api/v1/company-commission-schemes/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
-        m.put("PUT#/api/v1/company-commission-schemes/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
-        m.put("DELETE#/api/v1/company-commission-schemes/{id}", List.of("MoneyGrabAdmin", "MoneyGrabStaff"));
+        m.put("GET#/api/v1/company-commission-schemes", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
+        m.put("POST#/api/v1/company-commission-schemes", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
+        m.put("GET#/api/v1/company-commission-schemes/{id}", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
+        m.put("PUT#/api/v1/company-commission-schemes/{id}", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
+        m.put("DELETE#/api/v1/company-commission-schemes/{id}", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF));
 
         // CURRENCIES
-        m.put("GET#/api/v1/currencies", List.of("MoneyChangerAdmin", "MoneyChangerStaff"));
+        m.put("GET#/api/v1/currencies", List.of(GROUP_MONEY_CHANGER_ADMIN, GROUP_MONEY_CHANGER_STAFF));
 
         // HEALTH CHECK
-        m.put("GET#/api/actuator/health", List.of("MoneyGrabAdmin", "MoneyGrabStaff", "MoneyChangerAdmin", "MoneyChangerStaff"));
+        m.put("GET#/api/actuator/health", List.of(GROUP_MONEY_GRAB_ADMIN, GROUP_MONEY_GRAB_STAFF, GROUP_MONEY_CHANGER_ADMIN, GROUP_MONEY_CHANGER_STAFF));
 
         ACCESS_MATRIX = Collections.unmodifiableMap(m);
     }
