@@ -30,7 +30,7 @@ public class GroupAuthorizer
         this.jwtProcessor = jwtProcessor;
     }
 
-    private static ConfigurableJWTProcessor<SecurityContext> buildDefaultProcessor() {
+    static ConfigurableJWTProcessor<SecurityContext> buildDefaultProcessor() {
         try {
             DefaultJWTProcessor<SecurityContext> proc = new DefaultJWTProcessor<>();
             URL jwkUrl = new URL(AuthConstant.ISSUER + AuthConstant.JWKS_URL);
