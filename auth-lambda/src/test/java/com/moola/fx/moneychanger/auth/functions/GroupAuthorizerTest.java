@@ -46,7 +46,7 @@ class GroupAuthorizerTest {
                 .issuer(AuthConstant.ISSUER)
                 .claim(AuthConstant.CLAIM_CLIENT_ID, AuthConstant.CLIENT_ID_VALUE)
                 .expirationTime(new Date(System.currentTimeMillis() + 60_000))
-                .claim(AuthConstant.COGNITO_GROUPS, List.of("MoneyChangerStaff"))
+                .claim(AuthConstant.COGNITO_GROUPS, List.of(AuthConstant.GROUP_MONEY_CHANGER_STAFF))
                 .subject("test-user")
                 .claim(AuthConstant.CLAIM_TOKEN_USE, AuthConstant.CLAIM_TOKEN_USE_VALUE)
                 .build();
@@ -70,7 +70,7 @@ class GroupAuthorizerTest {
                 .issuer(AuthConstant.ISSUER)
                 .claim(AuthConstant.CLAIM_CLIENT_ID, AuthConstant.CLIENT_ID_VALUE)
                 .expirationTime(new Date(System.currentTimeMillis() + 60_000))
-                .claim(AuthConstant.COGNITO_GROUPS, List.of("Guest"))
+                .claim(AuthConstant.COGNITO_GROUPS, List.of(AuthConstant.GROUP_CUSTOMER))
                 .subject("another-user")
                 .claim(AuthConstant.CLAIM_TOKEN_USE, AuthConstant.CLAIM_TOKEN_USE_VALUE)
                 .build();
