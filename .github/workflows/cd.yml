@@ -25,10 +25,10 @@ jobs:
       - name: Build auth-lambda JAR
         run: mvn clean package -pl auth-lambda -am -DskipTests
 
-      - name: Install AWS SAM CLI via apt
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y aws-sam-cli
+      - name: Install AWS SAM CLI
+        uses: aws-actions/setup-sam@v2
+        with:
+          version: '1.141.0'
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
