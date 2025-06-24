@@ -5,16 +5,16 @@ on:
     branches:
       - '**'  # Run CI on all branches
     paths:
-      - 'src/**'
-      - 'pom.xml'
+      - 'auth-lambda/src/**'
+      - 'auth-lambda//pom.xml'
       - '.github/**'
       - 'deployment/**'
   pull_request:
     branches:
       - main  # Run CI on PRs into main
     paths:
-      - 'src/**'
-      - 'pom.xml'
+      - 'auth-lambda/src/**'
+      - 'auth-lambda/pom.xml'
       - '.github/**'
       - 'deployment/**'
   workflow_dispatch:
