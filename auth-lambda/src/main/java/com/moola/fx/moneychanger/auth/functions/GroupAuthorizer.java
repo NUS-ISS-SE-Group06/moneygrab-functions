@@ -37,8 +37,8 @@ public class GroupAuthorizer
             JWKSource<SecurityContext> src = JWKSourceBuilder.create(jwkUrl).build();
             proc.setJWSKeySelector(new JWSVerificationKeySelector<>(JWSAlgorithm.RS256, src));
             return proc;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to initialize JWT processor", e);
+        } catch (Exception exception) {
+            throw new RuntimeException("Failed to initialize JWT processor", exception);
         }
     }
 
