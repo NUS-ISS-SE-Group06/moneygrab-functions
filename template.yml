@@ -14,8 +14,9 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: GroupAuthorizer
+      Runtime: java21
       Handler: com.moola.fx.moneychanger.auth.functions.GroupAuthorizer::handleRequest
-      CodeUri: auth-lambda/target/auth-lambda-1.0.0-SNAPSHOT.jar
+      CodeUri: auth-lambda/
       Role: arn:aws:iam::797226340575:role/lambda-jwt-authorizer-role
       # Note: no Events here—you can attach this as a Custom Authorizer
       # in API Gateway separately, or add an Api event mapping if you want.
