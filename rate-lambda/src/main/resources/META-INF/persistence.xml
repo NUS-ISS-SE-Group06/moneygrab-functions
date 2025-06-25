@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1"
+             xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="
+        http://xmlns.jcp.org/xml/ns/persistence
+        http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+
+    <persistence-unit name="ratePU">
+        <!-- List your entities here -->
+        <class>com.moola.fx.moneychanger.rate.model.ComputeRate</class>
+        <!-- <class>com.moola.fx.moneychanger.rate.model.FxUpload</class> If needed -->
+
+        <properties>
+            <!-- ⚡️ IMPORTANT: All credentials come from environment variables -->
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="javax.persistence.jdbc.url" value="${env.DB_URL}"/>           <!-- e.g. jdbc:mysql://your-db-url:3306/fxuploaddb -->
+            <property name="javax.persistence.jdbc.user" value="${env.DB_USER}"/>         <!-- e.g. db_user -->
+            <property name="javax.persistence.jdbc.password" value="${env.DB_PASSWORD}"/>  <!-- e.g. db_password -->
+
+            <!-- ⚡️ Dialect for MySQL 8 -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect" />
+
+            <!-- ⚡️ IMPORTANT for Lambda / short life environments -->
+            <property name="hibernate.connection.provider_class" value="org.hibernate.hikaricp.internal.HikariCPConnectionProvider" />
+            <property name="hibernate.hikari.minimumIdle" value="1" />
+            <property name="hibernate.hikari.maximumPoolSize" value="5" />
+            <property name="hibernate.hikari.idleTimeout" value="30000" />
+            <property name="hibernate.hikari.connectionTimeout" value="30000" />
+
+            <!-- ⚡️ Optional settings for dev / testing -->
+            <property name="hibernate.show_sql" value="true" />
+            <property name="hibernate.format_sql" value="true" />
+
+
+        </properties>
+    </persistence-unit>
+</persistence>
