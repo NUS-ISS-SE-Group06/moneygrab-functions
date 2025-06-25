@@ -30,7 +30,7 @@ public class GroupAuthorizer
         this.jwtProcessor = jwtProcessor;
     }
 
-    private static ConfigurableJWTProcessor<SecurityContext> buildDefaultProcessor() {
+    static ConfigurableJWTProcessor<SecurityContext> buildDefaultProcessor() {
         try {
             DefaultJWTProcessor<SecurityContext> proc = new DefaultJWTProcessor<>();
             URL jwkUrl = new URL(AuthConstant.ISSUER + AuthConstant.JWKS_URL);
@@ -93,8 +93,8 @@ public class GroupAuthorizer
             ctx.getLogger().log("URL: "+key+"; Matrix: "+ok+"; Allowed: "+allowed);
             response.put(AuthConstant.IS_AUTHORIZED_KEY, allowed);
 
-        } catch (Exception e) {
-            ctx.getLogger().log("Auth failure: " + e);
+        } catch (Exception exception) {
+            ctx.getLogger().log("Auth failure: " + exception.getMessage());
             response.put(AuthConstant.IS_AUTHORIZED_KEY, false);
         }
         return response;
