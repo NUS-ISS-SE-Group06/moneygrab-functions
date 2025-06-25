@@ -15,6 +15,11 @@
     <name>MoneyGrab Rate Lambda</name>
     <packaging>jar</packaging>
 
+    <properties>
+        <mysql-connector.version>9.3.0</mysql-connector.version>
+        <jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.amazonaws</groupId>
@@ -29,11 +34,13 @@
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
+            <version>${mysql-connector.version}</version>
         </dependency>
 
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
+            <version>${jakarta.persistence-api.version}</version>
         </dependency>
     </dependencies>
 
