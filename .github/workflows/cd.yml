@@ -22,8 +22,8 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      - name: Build auth-lambda JAR
-        run: mvn clean package -pl auth-lambda -am -DskipTests
+#      - name: Build auth-lambda JAR
+#        run: mvn clean package -pl auth-lambda -am -DskipTests
 
       - name: Install AWS SAM CLI
         uses: aws-actions/setup-sam@v2
