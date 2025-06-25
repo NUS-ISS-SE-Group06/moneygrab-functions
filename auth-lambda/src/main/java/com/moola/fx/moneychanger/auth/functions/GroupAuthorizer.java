@@ -60,7 +60,7 @@ public class GroupAuthorizer
             String tokenIssuer = claims.getIssuer();
             String tokenUse = claims.getStringClaim(AuthConstant.CLAIM_TOKEN_USE);
             Date expiry = claims.getExpirationTime();
-            
+
             // Cognito access tokens have no “aud”, but do have “client_id”
             String tokenClientId = claims.getStringClaim(AuthConstant.CLAIM_CLIENT_ID);
 
@@ -100,5 +100,6 @@ public class GroupAuthorizer
         }
         return response;
     }
+
 }
 
