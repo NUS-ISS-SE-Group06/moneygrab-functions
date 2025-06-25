@@ -31,7 +31,6 @@
         <junit-jupiter.version>5.13.1</junit-jupiter.version>
         <mockito.version>5.18.0</mockito.version>
         <mysql-connector.version>9.3.0</mysql-connector.version>
-        <HikariCP.version>5.1.0</HikariCP.version>
         <jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
 
     </properties>
@@ -79,12 +78,7 @@
                 <artifactId>mysql-connector-j</artifactId>
                 <version>${mysql-connector.version}</version>
             </dependency>
-            <!-- HikariCP -->
-            <dependency>
-                <groupId>com.zaxxer</groupId>
-                <artifactId>HikariCP</artifactId>
-                <version>${HikariCP.version}</version>
-            </dependency>
+
             <dependency>
                 <groupId>jakarta.persistence</groupId>
                 <artifactId>jakarta.persistence-api</artifactId>
