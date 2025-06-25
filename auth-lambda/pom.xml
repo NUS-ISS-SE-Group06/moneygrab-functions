@@ -81,7 +81,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.3</version>
                 <configuration>
-                    <!-- injects the JaCoCo agent into the forked JVM -->
                     <argLine>${jacocoArgLine}</argLine>
                 </configuration>
             </plugin>
@@ -91,30 +90,6 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.10</version>
                 <executions>
-                    <!-- 1) Inject agent before tests -->
-                    <execution>
-                        <id>prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <propertyName>jacocoArgLine</propertyName>
-                        </configuration>
-                    </execution>
-
-                    <!-- 2) Generate HTML report after tests -->
-                    <execution>
-                        <id>report</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                        <configuration>
-                            <dataFile>${project.build.directory}/jacoco.exec</dataFile>
-                            <outputDirectory>${project.build.directory}/jacoco-report</outputDirectory>
-                        </configuration>
-                    </execution>
-
                     <!-- 3) Enforce coverage rules and fail the build -->
                     <execution>
                         <id>check</id>
