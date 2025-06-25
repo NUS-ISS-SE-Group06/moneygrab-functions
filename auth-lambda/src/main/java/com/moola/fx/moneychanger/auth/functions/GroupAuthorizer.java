@@ -93,7 +93,6 @@ public class GroupAuthorizer
             boolean allowed = userGroups.stream().anyMatch(ok::contains);
             ctx.getLogger().log("URL: "+key+"; Matrix: "+ok+"; Allowed: "+allowed);
             response.put(AuthConstant.IS_AUTHORIZED_KEY, allowed);
-
         } catch (Exception exception) {
             ctx.getLogger().log("Auth failure: " + exception.getMessage());
             response.put(AuthConstant.IS_AUTHORIZED_KEY, false);

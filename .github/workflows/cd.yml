@@ -22,6 +22,10 @@ jobs:
           distribution: temurin
           java-version: '21'
 
+      - name: Install & build full Maven project
+        # Installs your parent POM and all modules into ~/.m2
+        run: mvn clean install -DskipTests
+
       - name: Install AWS SAM CLI
         uses: aws-actions/setup-sam@v2
         with:
