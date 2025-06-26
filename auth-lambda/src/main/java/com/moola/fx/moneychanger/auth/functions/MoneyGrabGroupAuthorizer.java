@@ -43,10 +43,10 @@ public class MoneyGrabGroupAuthorizer
             throw new JwtProcessorInitializationException(
                     "Failed to initialize JWT processor: invalid JWKS URL or parse error", e
             );
-        } catch (Exception e) {
+        } catch (Exception exception) {
             // fallback for other unexpected errors
             throw new JwtProcessorInitializationException(
-                    "Unexpected error initializing JWT processor", e
+                    "Unexpected error initializing JWT processor", exception
             );
         }
     }
