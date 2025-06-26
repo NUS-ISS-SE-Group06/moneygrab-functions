@@ -73,4 +73,8 @@
       </plugin>
     </plugins>
   </build>
+  <properties>
+    <mysql-connector.version>9.3.0</mysql-connector.version>
+    <jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
+  </properties>
 </project>
