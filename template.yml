@@ -12,13 +12,13 @@ Globals:
 Resources:
   AuthLambdaFunction:
     Type: AWS::Serverless::Function
+    DeletionPolicy: Delete
     Properties:
       FunctionName: moneygrab-groupAuthorizer
       Runtime: java21
       Handler: com.moola.fx.moneychanger.auth.functions.MoneyGrabGroupAuthorizer::handleRequest
       CodeUri: auth-lambda/
       Role: arn:aws:iam::797226340575:role/lambda-jwt-authorizer-role
-      DeletionPolicy: Delete
 
 Outputs:
   AuthLambdaArn:
