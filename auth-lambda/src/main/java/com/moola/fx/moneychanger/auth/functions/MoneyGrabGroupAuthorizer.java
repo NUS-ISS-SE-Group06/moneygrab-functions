@@ -62,7 +62,7 @@ public class MoneyGrabGroupAuthorizer
             Date expiry = claims.getExpirationTime();
 
             // Cognito access tokens have no “aud”, but do have “client_id”
-            String tokenClientId = claims.getStringClaim(AuthConstant.CLAIM_CLIENT_ID);
+            String requestClientId = claims.getStringClaim(AuthConstant.CLAIM_CLIENT_ID);
 
             ctx.getLogger().log("claims: "+claims);
             ctx.getLogger().log("claims: tokenIssuer - "+tokenIssuer);
@@ -72,7 +72,7 @@ public class MoneyGrabGroupAuthorizer
             // reject if issuer wrong, not an access token, wrong client_id, or expired
             if (!AuthConstant.ISSUER.equals(tokenIssuer)
                     || !AuthConstant.CLAIM_TOKEN_USE_VALUE.equals(tokenUse)
-                    || !AuthConstant.CLIENT_ID_VALUE.equals(tokenClientId)
+                    || !AuthConstant.CLIENT_ID_VALUE.equals(requestClientId)
                     || new Date().after(expiry)) {
                 ctx.getLogger().log("Token Validation failed");
                 response.put(AuthConstant.IS_AUTHORIZED_KEY, false);
