@@ -4,6 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2CustomAuthorizerEvent;
 import com.moola.fx.moneychanger.auth.constants.AuthConstant;
+import com.moola.fx.moneychanger.auth.exception.JwtProcessorInitializationException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.jwk.source.JWKSourceBuilder;
@@ -13,6 +14,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
@@ -37,8 +39,15 @@ public class MoneyGrabGroupAuthorizer
             JWKSource<SecurityContext> src = JWKSourceBuilder.create(jwkUrl).build();
             proc.setJWSKeySelector(new JWSVerificationKeySelector<>(JWSAlgorithm.RS256, src));
             return proc;
-        } catch (Exception exception) {
-            throw new RuntimeException("Failed to initialize JWT processor", exception);
+        } catch (MalformedURLException | java.text.ParseException e) {
+            throw new JwtProcessorInitializationException(
+                    "Failed to initialize JWT processor: invalid JWKS URL or parse error", e
+            );
+        } catch (Exception e) {
+            // fallback for other unexpected errors
+            throw new JwtProcessorInitializationException(
+                    "Unexpected error initializing JWT processor", e
+            );
         }
     }
 
