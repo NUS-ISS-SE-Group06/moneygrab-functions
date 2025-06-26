@@ -39,7 +39,7 @@ public class MoneyGrabGroupAuthorizer
             JWKSource<SecurityContext> src = JWKSourceBuilder.create(jwkUrl).build();
             proc.setJWSKeySelector(new JWSVerificationKeySelector<>(JWSAlgorithm.RS256, src));
             return proc;
-        } catch (MalformedURLException | java.text.ParseException e) {
+        } catch (MalformedURLException e) {
             throw new JwtProcessorInitializationException(
                     "Failed to initialize JWT processor: invalid JWKS URL or parse error", e
             );
