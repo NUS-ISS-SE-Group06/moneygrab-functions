@@ -13,13 +13,12 @@ Resources:
   AuthLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: GroupAuthorizer
+      FunctionName: moneygrab-groupAuthorizer
       Runtime: java21
-      Handler: com.moola.fx.moneychanger.auth.functions.GroupAuthorizer::handleRequest
+      Handler: com.moola.fx.moneychanger.auth.functions.MoneyGrabGroupAuthorizer::handleRequest
       CodeUri: auth-lambda/
       Role: arn:aws:iam::797226340575:role/lambda-jwt-authorizer-role
-      # Note: no Events here—you can attach this as a Custom Authorizer
-      # in API Gateway separately, or add an Api event mapping if you want.
+      DeletionPolicy: Delete
 
 Outputs:
   AuthLambdaArn:

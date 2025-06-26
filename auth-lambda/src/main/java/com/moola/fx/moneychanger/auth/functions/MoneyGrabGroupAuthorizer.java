@@ -16,17 +16,17 @@ import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import java.net.URL;
 import java.util.*;
 
-public class GroupAuthorizer
+public class MoneyGrabGroupAuthorizer
         implements RequestHandler<APIGatewayV2CustomAuthorizerEvent, Map<String,Object>> {
 
     private final ConfigurableJWTProcessor<SecurityContext> jwtProcessor;
 
-    public GroupAuthorizer() {
+    public MoneyGrabGroupAuthorizer() {
         this.jwtProcessor = buildDefaultProcessor();
     }
 
     // package-private constructor for tests
-    GroupAuthorizer(ConfigurableJWTProcessor<SecurityContext> jwtProcessor) {
+    MoneyGrabGroupAuthorizer(ConfigurableJWTProcessor<SecurityContext> jwtProcessor) {
         this.jwtProcessor = jwtProcessor;
     }
 
@@ -99,6 +99,6 @@ public class GroupAuthorizer
         }
         return response;
     }
-    
+
 }
 
