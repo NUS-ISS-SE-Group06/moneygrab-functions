@@ -105,7 +105,6 @@ public class FxFileUploadHandler implements RequestHandler<APIGatewayProxyReques
                 try {
                     conn.rollback();
                 } catch (SQLException ex) {
-
                     throw new RuntimeException("Database rollback failed", ex);
                 }
             }
@@ -119,7 +118,7 @@ public class FxFileUploadHandler implements RequestHandler<APIGatewayProxyReques
 
     private List<FxUploadDto> getLatestFxRates() {
         String sql = "SELECT currency_code, bid, ask, spread, updated_at " +
-                "FROM fx_upload " ;
+                "FROM fx_upload ";
         List<FxUploadDto> rates = new ArrayList<>();
 
         try (Connection conn = DatabaseConfig.getConnection();
@@ -151,18 +150,5 @@ public class FxFileUploadHandler implements RequestHandler<APIGatewayProxyReques
         }
     }
 
-    public static void main(String[] args) throws Exception {
 
-
-        FxFileUploadHandler handler = new FxFileUploadHandler();
-
-        // Simulate a POST request with multiple records
-        String body = "[{\"currencyCode\":\"USD\",\"bid\":1.2,\"ask\":1.3},{\"currencyCode\":\"EUR\",\"bid\":1.1,\"ask\":1.2}]";
-        APIGatewayProxyRequestEvent event = new APIGatewayProxyRequestEvent()
-                .withHttpMethod("POST")
-                .withBody(body);
-
-        APIGatewayProxyResponseEvent response = handler.handleRequest(event, null);
-        System.out.println("Lambda Response: " + response.getBody());
-    }
 }
