@@ -5,9 +5,7 @@
         <groupId>com.moola.fx</groupId>
         <artifactId>moneygrab-functions</artifactId>
         <version>1.0.0-SNAPSHOT</version>
-
     </parent>
-
 
     <artifactId>FXFileUpload-lambda</artifactId>
     <packaging>jar</packaging>
@@ -35,14 +33,13 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-inline</artifactId>
-            <version>5.2.0</version> <!-- or latest available -->
+            <version>5.2.0</version>
             <scope>test</scope>
         </dependency>
-        <!-- Add latest Byte Buddy (if not transitively included) -->
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
-            <version>1.14.11</version> <!-- use latest -->
+            <version>1.14.11</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -57,39 +54,57 @@
             <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- AWS Lambda Java Core -->
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-lambda-java-core</artifactId>
             <version>1.2.3</version>
         </dependency>
-        <!-- AWS Lambda Events (for API Gateway, etc) -->
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-lambda-java-events</artifactId>
             <version>3.11.4</version>
         </dependency>
-        <!-- Jackson for JSON parsing -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.17.1</version>
         </dependency>
-        <!-- SLF4J for logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>2.0.12</version>
             <scope>runtime</scope>
         </dependency>
-        <!-- MySQL or JDBC driver, if needed -->
-        <!-- Add your JDBC driver here -->
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
             <version>2.2</version>
         </dependency>
-
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

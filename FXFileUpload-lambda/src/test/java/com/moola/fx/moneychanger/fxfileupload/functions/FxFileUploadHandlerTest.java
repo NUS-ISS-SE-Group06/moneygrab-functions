@@ -12,7 +12,6 @@ import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,20 +28,18 @@ class FxFileUploadHandlerTest {
     }
 
     @Test
-    void testPost_HappyPath() throws Exception {
-        // Arrange
+    void testPostHappyPath() throws Exception {
         FxUploadDto dto = new FxUploadDto();
-        dto.setCurrency_code("USD");
+        dto.setCurrencyCode("USD");
         dto.setBid(new BigDecimal("1.2"));
         dto.setAsk(new BigDecimal("1.3"));
 
-        String json = new ObjectMapper().writeValueAsString(dto);
+        String json = new ObjectMapper().writeValueAsString(List.of(dto));
 
         APIGatewayProxyRequestEvent event = new APIGatewayProxyRequestEvent()
                 .withHttpMethod("POST")
                 .withBody(json);
 
-        // Mock DB
         try (MockedStatic<DatabaseConfig> dbConfigMock = Mockito.mockStatic(DatabaseConfig.class)) {
             Connection mockConn = Mockito.mock(Connection.class);
             PreparedStatement deleteStmt = Mockito.mock(PreparedStatement.class);
@@ -52,20 +49,18 @@ class FxFileUploadHandlerTest {
             Mockito.when(mockConn.prepareStatement(Mockito.anyString()))
                     .thenReturn(deleteStmt, insertStmt);
 
-            Mockito.when(deleteStmt.executeUpdate()).thenReturn(1);
-            Mockito.when(insertStmt.executeUpdate()).thenReturn(1);
+            Mockito.when(deleteStmt.executeBatch()).thenReturn(new int[]{1});
+            Mockito.when(insertStmt.executeBatch()).thenReturn(new int[]{1});
 
-            // Act
             APIGatewayProxyResponseEvent response = handler.handleRequest(event, mockContext);
 
-            // Assert
             assertEquals(200, response.getStatusCode());
             assertTrue(response.getBody().contains("FX data saved successfully"));
         }
     }
 
     @Test
-    void testGet_HappyPath() throws Exception {
+    void testGetHappyPath() throws Exception {
         APIGatewayProxyRequestEvent event = new APIGatewayProxyRequestEvent()
                 .withHttpMethod("GET");
 
@@ -78,7 +73,6 @@ class FxFileUploadHandlerTest {
             Mockito.when(mockConn.prepareStatement(Mockito.anyString())).thenReturn(mockStmt);
             Mockito.when(mockStmt.executeQuery()).thenReturn(mockRs);
 
-            // Simulate two records
             Mockito.when(mockRs.next()).thenReturn(true, false);
             Mockito.when(mockRs.getString("currency_code")).thenReturn("USD");
             Mockito.when(mockRs.getBigDecimal("bid")).thenReturn(new BigDecimal("1.2"));
@@ -93,11 +87,10 @@ class FxFileUploadHandlerTest {
     }
 
     @Test
-    void testPost_MissingFields_BadRequest() throws Exception {
-        // No bid/ask
+    void testPostMissingFieldsBadRequest() throws Exception {
         FxUploadDto dto = new FxUploadDto();
-        dto.setCurrency_code("USD");
-        String json = new ObjectMapper().writeValueAsString(dto);
+        dto.setCurrencyCode("USD");
+        String json = new ObjectMapper().writeValueAsString(List.of(dto));
 
         APIGatewayProxyRequestEvent event = new APIGatewayProxyRequestEvent()
                 .withHttpMethod("POST")
@@ -121,12 +114,12 @@ class FxFileUploadHandlerTest {
     }
 
     @Test
-    void testDatabaseException_Returns500() throws Exception {
+    void testDatabaseExceptionReturns500() throws Exception {
         FxUploadDto dto = new FxUploadDto();
-        dto.setCurrency_code("USD");
+        dto.setCurrencyCode("USD");
         dto.setBid(new BigDecimal("1.2"));
         dto.setAsk(new BigDecimal("1.3"));
-        String json = new ObjectMapper().writeValueAsString(dto);
+        String json = new ObjectMapper().writeValueAsString(List.of(dto));
 
         APIGatewayProxyRequestEvent event = new APIGatewayProxyRequestEvent()
                 .withHttpMethod("POST")
@@ -140,5 +133,23 @@ class FxFileUploadHandlerTest {
             assertEquals(500, response.getStatusCode());
             assertTrue(response.getBody().contains("Server error"));
         }
+    }
+
+    @Test
+    void testPostNegativeValuesBadRequest() throws Exception {
+        FxUploadDto dto = new FxUploadDto();
+        dto.setCurrencyCode("USD");
+        dto.setBid(new BigDecimal("-1.2"));
+        dto.setAsk(new BigDecimal("1.3"));
+        String json = new ObjectMapper().writeValueAsString(List.of(dto));
+
+        APIGatewayProxyRequestEvent event = new APIGatewayProxyRequestEvent()
+                .withHttpMethod("POST")
+                .withBody(json);
+
+        APIGatewayProxyResponseEvent response = handler.handleRequest(event, mockContext);
+
+        assertEquals(400, response.getStatusCode());
+        assertTrue(response.getBody().contains("Bid/Ask cannot be negative"));
     }
 }

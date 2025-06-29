@@ -20,7 +20,7 @@ public class DatabaseConfig {
     private static void loadYamlConfig() {
         try (InputStream in = DatabaseConfig.class.getClassLoader().getResourceAsStream("application.yml")) {
             if (in == null) {
-                throw new RuntimeException("Cannot find application.yml in resources!");
+                throw new DatabaseConfigException("Cannot find application.yml in resources!");
             }
             Yaml yaml = new Yaml();
             Map<String, Object> yamlMap = yaml.load(in);
@@ -33,11 +33,26 @@ public class DatabaseConfig {
             dbUser = (String) datasource.get("username");
             dbPassword = (String) datasource.get("password");
         } catch (Exception e) {
-            throw new RuntimeException("Failed to load database configuration from YAML", e);
+            throw new DatabaseConfigException("Failed to load database configuration from YAML", e);
         }
     }
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+    }
+
+    // Private constructor to hide implicit public one
+    private DatabaseConfig() {
+        // Prevent instantiation
+    }
+}
+
+class DatabaseConfigException extends RuntimeException {
+    public DatabaseConfigException(String message) {
+        super(message);
+    }
+
+    public DatabaseConfigException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

@@ -22,19 +22,20 @@ public class FxFileUploadHandler implements RequestHandler<APIGatewayProxyReques
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent input, Context context) {
         try {
-            String method = input.getHttpMethod() != null ? input.getHttpMethod() : "POST";
+            String methodName = input.getHttpMethod() != null ? input.getHttpMethod() : "POST";
 
-            if ("GET".equalsIgnoreCase(method)) {
+            if ("GET".equalsIgnoreCase(methodName)) {
                 List<FxUploadDto> latestRates = getLatestFxRates();
                 String responseJson = objectMapper.writeValueAsString(latestRates);
                 return new APIGatewayProxyResponseEvent()
                         .withStatusCode(200)
                         .withBody(responseJson);
-            } else if ("POST".equalsIgnoreCase(method)) {
-                FxUploadDto fxData = parseBody(input.getBody());
-                validate(fxData);
-                saveToDatabase(fxData);
-
+            } else if ("POST".equalsIgnoreCase(methodName)) {
+                List<FxUploadDto> fxDataList = objectMapper.readValue(input.getBody(), new TypeReference<List<FxUploadDto>>(){});
+                for (FxUploadDto fxData : fxDataList) {
+                    validate(fxData);
+                }
+                saveToDatabase(fxDataList);
                 return new APIGatewayProxyResponseEvent()
                         .withStatusCode(200)
                         .withBody("{\"message\":\"FX data saved successfully\"}");
@@ -54,23 +55,19 @@ public class FxFileUploadHandler implements RequestHandler<APIGatewayProxyReques
         }
     }
 
-    private FxUploadDto parseBody(String body) throws Exception {
-        return objectMapper.readValue(body, FxUploadDto.class);
-    }
-
     private void validate(FxUploadDto dto) {
         if (dto == null
-                || dto.getCurrency_code() == null || dto.getCurrency_code().isEmpty()
+                || dto.getCurrencyCode() == null || dto.getCurrencyCode().isEmpty()
                 || dto.getBid() == null
                 || dto.getAsk() == null) {
-            throw new ValidationException("Missing required fields: currency_code, bid, ask");
+            throw new ValidationException("Missing required fields: currencyCode, bid, ask");
         }
         if (dto.getBid().compareTo(BigDecimal.ZERO) < 0 || dto.getAsk().compareTo(BigDecimal.ZERO) < 0) {
             throw new ValidationException("Bid/Ask cannot be negative");
         }
     }
 
-    private void saveToDatabase(FxUploadDto data) {
+    private void saveToDatabase(List<FxUploadDto> dataList) {
         String deleteSql = "DELETE FROM fx_upload WHERE currency_code = ?";
         String insertSql = "INSERT INTO fx_upload (currency_code, bid, ask, spread) VALUES (?, ?, ?, ?)";
 
@@ -80,45 +77,49 @@ public class FxFileUploadHandler implements RequestHandler<APIGatewayProxyReques
 
         try {
             conn = DatabaseConfig.getConnection();
-            conn.setAutoCommit(false); // Start transaction
+            conn.setAutoCommit(false);
 
-            // 1. Remove old record (if any)
+            // Remove old records
             deleteStmt = conn.prepareStatement(deleteSql);
-            deleteStmt.setString(1, data.getCurrency_code());
-            deleteStmt.executeUpdate();
+            for (FxUploadDto data : dataList) {
+                deleteStmt.setString(1, data.getCurrencyCode());
+                deleteStmt.addBatch();
+            }
+            deleteStmt.executeBatch();
 
-            // 2. Insert new record
+            // Insert new records
             insertStmt = conn.prepareStatement(insertSql);
-            insertStmt.setString(1, data.getCurrency_code());
-            insertStmt.setBigDecimal(2, data.getBid());
-            insertStmt.setBigDecimal(3, data.getAsk());
-            insertStmt.setBigDecimal(4, data.getAsk().subtract(data.getBid()));
-            insertStmt.executeUpdate();
+            for (FxUploadDto data : dataList) {
+                insertStmt.setString(1, data.getCurrencyCode());
+                insertStmt.setBigDecimal(2, data.getBid());
+                insertStmt.setBigDecimal(3, data.getAsk());
+                insertStmt.setBigDecimal(4, data.getAsk().subtract(data.getBid()));
+                insertStmt.addBatch();
+            }
+            insertStmt.executeBatch();
 
-            conn.commit(); // Commit transaction
+            conn.commit();
 
         } catch (SQLException e) {
             if (conn != null) {
                 try {
-                    conn.rollback(); // Rollback on error
+                    conn.rollback();
                 } catch (SQLException ex) {
-                    // Optionally log rollback error
+                    ex.printStackTrace();
+                    throw new RuntimeException("Database rollback failed", ex);
                 }
             }
             throw new RuntimeException("Database operation failed", e);
         } finally {
-            // Close resources in reverse order of allocation
-            try { if (insertStmt != null) insertStmt.close(); } catch (SQLException ignore) {}
-            try { if (deleteStmt != null) deleteStmt.close(); } catch (SQLException ignore) {}
-            try { if (conn != null) conn.close(); } catch (SQLException ignore) {}
+            closeQuietly(insertStmt);
+            closeQuietly(deleteStmt);
+            closeQuietly(conn);
         }
     }
 
-    // New: Query the latest FX rates for all currencies
     private List<FxUploadDto> getLatestFxRates() {
         String sql = "SELECT currency_code, bid, ask, spread, updated_at " +
-                "FROM fx_upload " +
-                "WHERE updated_at = (SELECT MAX(updated_at) FROM fx_upload u2 WHERE u2.currency_code = fx_upload.currency_code)";
+                "FROM fx_upload " ;
         List<FxUploadDto> rates = new ArrayList<>();
 
         try (Connection conn = DatabaseConfig.getConnection();
@@ -127,16 +128,41 @@ public class FxFileUploadHandler implements RequestHandler<APIGatewayProxyReques
 
             while (rs.next()) {
                 FxUploadDto dto = new FxUploadDto();
-                dto.setCurrency_code(rs.getString("currency_code"));
+                dto.setCurrencyCode(rs.getString("currency_code"));
                 dto.setBid(rs.getBigDecimal("bid"));
                 dto.setAsk(rs.getBigDecimal("ask"));
                 dto.setSpread(rs.getBigDecimal("spread"));
-                dto.setUpdated_at(rs.getString("updated_at"));
+                dto.setUpdatedAt(rs.getString("updated_at"));
                 rates.add(dto);
             }
         } catch (SQLException e) {
             throw new RuntimeException("Database query failed", e);
         }
         return rates;
+    }
+
+    private void closeQuietly(AutoCloseable resource) {
+        if (resource != null) {
+            try {
+                resource.close();
+            } catch (Exception e) {
+                // Ignore
+            }
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+
+
+        FxFileUploadHandler handler = new FxFileUploadHandler();
+
+        // Simulate a POST request with multiple records
+        String body = "[{\"currencyCode\":\"USD\",\"bid\":1.2,\"ask\":1.3},{\"currencyCode\":\"EUR\",\"bid\":1.1,\"ask\":1.2}]";
+        APIGatewayProxyRequestEvent event = new APIGatewayProxyRequestEvent()
+                .withHttpMethod("POST")
+                .withBody(body);
+
+        APIGatewayProxyResponseEvent response = handler.handleRequest(event, null);
+        System.out.println("Lambda Response: " + response.getBody());
     }
 }

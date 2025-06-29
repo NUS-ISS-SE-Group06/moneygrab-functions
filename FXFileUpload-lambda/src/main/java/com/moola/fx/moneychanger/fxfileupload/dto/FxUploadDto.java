@@ -3,18 +3,18 @@ package com.moola.fx.moneychanger.fxfileupload.dto;
 import java.math.BigDecimal;
 
 public class FxUploadDto {
-    private String currency_code;
+    private String currencyCode;
     private BigDecimal bid;
     private BigDecimal ask;
     private BigDecimal spread;
-    private String updated_at;
+    private String updatedAt;
 
-    public String getCurrency_code() {
-        return currency_code;
+    public String getCurrencyCode() {
+        return currencyCode;
     }
 
-    public void setCurrency_code(String currency_code) {
-        this.currency_code = currency_code;
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
     }
 
     public BigDecimal getBid() {
@@ -41,11 +41,11 @@ public class FxUploadDto {
         this.spread = spread;
     }
 
-    public String getUpdated_at() {
-        return updated_at;
+    public String getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated_at(String updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
