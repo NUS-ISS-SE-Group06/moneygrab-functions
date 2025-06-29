@@ -105,7 +105,7 @@ public class FxFileUploadHandler implements RequestHandler<APIGatewayProxyReques
                 try {
                     conn.rollback();
                 } catch (SQLException ex) {
-                    ex.printStackTrace();
+
                     throw new RuntimeException("Database rollback failed", ex);
                 }
             }
