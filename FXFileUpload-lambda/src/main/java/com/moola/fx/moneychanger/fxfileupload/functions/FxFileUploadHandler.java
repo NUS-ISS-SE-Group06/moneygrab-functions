@@ -48,7 +48,7 @@ public class FxFileUploadHandler implements RequestHandler<APIGatewayProxyReques
             return new APIGatewayProxyResponseEvent()
                     .withStatusCode(400)
                     .withBody("{\"error\":\"" + ve.getMessage() + "\"}");
-        } catch (Exception e) {
+        }  catch (Exception e) {
             return new APIGatewayProxyResponseEvent()
                     .withStatusCode(500)
                     .withBody("{\"error\":\"Server error: " + e.getMessage() + "\"}");
@@ -71,16 +71,13 @@ public class FxFileUploadHandler implements RequestHandler<APIGatewayProxyReques
         String deleteSql = "DELETE FROM fx_upload WHERE currency_code = ?";
         String insertSql = "INSERT INTO fx_upload (currency_code, bid, ask, spread) VALUES (?, ?, ?, ?)";
 
-        Connection conn = null;
-        PreparedStatement deleteStmt = null;
-        PreparedStatement insertStmt = null;
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement deleteStmt = conn.prepareStatement(deleteSql);
+             PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
 
-        try {
-            conn = DatabaseConfig.getConnection();
             conn.setAutoCommit(false);
 
             // Remove old records
-            deleteStmt = conn.prepareStatement(deleteSql);
             for (FxUploadDto data : dataList) {
                 deleteStmt.setString(1, data.getCurrencyCode());
                 deleteStmt.addBatch();
@@ -88,7 +85,6 @@ public class FxFileUploadHandler implements RequestHandler<APIGatewayProxyReques
             deleteStmt.executeBatch();
 
             // Insert new records
-            insertStmt = conn.prepareStatement(insertSql);
             for (FxUploadDto data : dataList) {
                 insertStmt.setString(1, data.getCurrencyCode());
                 insertStmt.setBigDecimal(2, data.getBid());
@@ -101,24 +97,13 @@ public class FxFileUploadHandler implements RequestHandler<APIGatewayProxyReques
             conn.commit();
 
         } catch (SQLException e) {
-            if (conn != null) {
-                try {
-                    conn.rollback();
-                } catch (SQLException ex) {
-                    throw new RuntimeException("Database rollback failed", ex);
-                }
-            }
-            throw new RuntimeException("Database operation failed", e);
-        } finally {
-            closeQuietly(insertStmt);
-            closeQuietly(deleteStmt);
-            closeQuietly(conn);
+            throw new DatabaseOperationException("Database operation failed", e);
         }
     }
 
     private List<FxUploadDto> getLatestFxRates() {
         String sql = "SELECT currency_code, bid, ask, spread, updated_at " +
-                "FROM fx_upload ";
+                "FROM fx_upload " ;
         List<FxUploadDto> rates = new ArrayList<>();
 
         try (Connection conn = DatabaseConfig.getConnection();
@@ -135,20 +120,22 @@ public class FxFileUploadHandler implements RequestHandler<APIGatewayProxyReques
                 rates.add(dto);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Database query failed", e);
+            throw new DatabaseQueryException("Database query failed", e);
         }
         return rates;
     }
 
-    private void closeQuietly(AutoCloseable resource) {
-        if (resource != null) {
-            try {
-                resource.close();
-            } catch (Exception e) {
-                // Ignore
-            }
-        }
+
+}
+
+class DatabaseOperationException extends RuntimeException {
+    public DatabaseOperationException(String message, Throwable cause) {
+        super(message, cause);
     }
+}
 
-
+class DatabaseQueryException extends RuntimeException {
+    public DatabaseQueryException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
