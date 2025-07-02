@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:mysql://your-db-endpoint:3306/fxuploaddb}
+    username: ${DB_USER:your-username}
+    password: ${DB_PASSWORD:your-password}
