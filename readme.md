@@ -28,7 +28,58 @@ This policy provides basic Lambda execution permissions such as writing logs to 
 To compile the code for a specific Lambda function, use the following Maven command. For example, to build the `auth-lambda`:
 
 ```bash
+mvn clean package -pl <lambda-module>
+
 mvn clean package -pl auth-lambda
+mvn clean package -pl FXFileUpload-lambda
+mvn clean package -pl rate-lambda
+
+```
+## How to Local Build with AWS SAM
+
+To build the project locally and generate the .aws-sam directory for local testing and deployment:
+
+```bash
+# Navigate to the project directory
+# cd /moneygrab-functions
+# sam build <Resources_Name>   
+
+sam build
+
+````
+
+## Output Structure
+
+After a successful build, your folder structure should look like this:
+
+```pgsql
+moneygrab-functions/
+├── rate-lambda/
+├── auth-lambda/
+├── template.yaml
+├── .aws-sam/
+│   └── build/
+│       ├── RateLambdaFunction/
+│       └── template.yaml
+```
+
+## How to Invoke Lambda Locally with SAM
+
+After successfully building your Lambda using the AWS SAM CLI, you can test it locally using the sam local invoke command. This allows you to simulate how your Lambda function behaves in the AWS environment — without deploying it to the cloud.
+
+```bash
+# Go to Project Root Directory
+# ~/moneygrab-functions/
+
+# sam local invoke <Resources-Name-In-Template-yml> --template .aws-sam/build/template.yaml --event /resources/event.json
+
+sam local invoke RateLambdaFunction --template .aws-sam/build/template.yaml --event resources/sample-rate-lambda-event.json 
 
 ```
 
+## Sample Test Data (event.json)
+```pgsql
+moneygrab-functions/
+├── resources/
+│   └── sample-rate-lambda-event.json
+```

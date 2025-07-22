@@ -26,7 +26,7 @@ Resources:
     Properties:
       FunctionName: RateComputeHandler
       Handler: com.moola.fx.moneychanger.rate.functions.RateHandler::handleRequest
-      CodeUri: rate-lambda/target/rate-lambda-1.0.0-SNAPSHOT-shaded.jar
+      CodeUri: rate-lambda/
       Role: arn:aws:iam::797226340575:role/lambda-jwt-authorizer-role
 
 Outputs:
