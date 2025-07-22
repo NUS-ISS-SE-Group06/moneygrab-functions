@@ -6,7 +6,7 @@ Description: MoneyGrab Mono-Repo Lambda Functions
 Globals:
   Function:
     Runtime: java21
-    Timeout: 10   # seconds
+    Timeout: 10
     MemorySize: 512
 
 Resources:
@@ -15,12 +15,24 @@ Resources:
     Properties:
       FunctionName: GroupAuthorizer
       Handler: com.moola.fx.moneychanger.auth.functions.GroupAuthorizer::handleRequest
-      CodeUri: auth-lambda/target/auth-lambda-1.0.0-SNAPSHOT.jar
+      CodeUri: auth-lambda/target/auth-lambda-1.0.0-SNAPSHOT-shaded.jar
       Role: arn:aws:iam::797226340575:role/lambda-jwt-authorizer-role
       # Note: no Events here—you can attach this as a Custom Authorizer
       # in API Gateway separately, or add an Api event mapping if you want.
+
+  RateLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: RateComputeHandler
+      Handler: com.moola.fx.moneychanger.rate.functions.RateHandler::handleRequest
+      CodeUri: rate-lambda/target/rate-lambda-1.0.0-SNAPSHOT-shaded.jar
+      Role: arn:aws:iam::797226340575:role/lambda-jwt-authorizer-role
 
 Outputs:
   AuthLambdaArn:
     Description: ARN of the Auth Lambda
     Value: !GetAtt AuthLambdaFunction.Arn
+
+  RateLambdaArn:
+    Description: ARN of the Rate Lambda
+    Value: !GetAtt RateLambdaFunction.Arn
