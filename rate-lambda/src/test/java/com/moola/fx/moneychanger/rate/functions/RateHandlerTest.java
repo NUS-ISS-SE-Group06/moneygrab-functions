@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moola.fx.moneychanger.rate.dto.BasicRate;
 import com.moola.fx.moneychanger.rate.dto.ComputedRate;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Test; 
 
 import java.math.BigDecimal;
 import java.util.List;
