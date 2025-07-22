@@ -4,6 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayV2CustomAuthorizerEvent;
 import com.moola.fx.moneychanger.auth.constants.AuthConstant;
+import com.moola.fx.moneychanger.auth.exception.JwtProcessorInitializationException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.jwk.source.JWKSourceBuilder;
@@ -13,20 +14,21 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
-public class GroupAuthorizer
+public class MoneyGrabGroupAuthorizer
         implements RequestHandler<APIGatewayV2CustomAuthorizerEvent, Map<String,Object>> {
 
     private final ConfigurableJWTProcessor<SecurityContext> jwtProcessor;
 
-    public GroupAuthorizer() {
+    public MoneyGrabGroupAuthorizer() {
         this.jwtProcessor = buildDefaultProcessor();
     }
 
     // package-private constructor for tests
-    GroupAuthorizer(ConfigurableJWTProcessor<SecurityContext> jwtProcessor) {
+    MoneyGrabGroupAuthorizer(ConfigurableJWTProcessor<SecurityContext> jwtProcessor) {
         this.jwtProcessor = jwtProcessor;
     }
 
@@ -37,8 +39,15 @@ public class GroupAuthorizer
             JWKSource<SecurityContext> src = JWKSourceBuilder.create(jwkUrl).build();
             proc.setJWSKeySelector(new JWSVerificationKeySelector<>(JWSAlgorithm.RS256, src));
             return proc;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to initialize JWT processor", e);
+        } catch (MalformedURLException e) {
+            throw new JwtProcessorInitializationException(
+                    "Failed to initialize JWT processor: invalid JWKS URL or parse error", e
+            );
+        } catch (Exception exception) {
+            // fallback for other unexpected errors
+            throw new JwtProcessorInitializationException(
+                    "Unexpected error initializing JWT processor", exception
+            );
         }
     }
 
@@ -60,8 +69,9 @@ public class GroupAuthorizer
             String tokenIssuer = claims.getIssuer();
             String tokenUse = claims.getStringClaim(AuthConstant.CLAIM_TOKEN_USE);
             Date expiry = claims.getExpirationTime();
+
             // Cognito access tokens have no “aud”, but do have “client_id”
-            String tokenClientId = claims.getStringClaim(AuthConstant.CLAIM_CLIENT_ID);
+            String requestClientId = claims.getStringClaim(AuthConstant.CLAIM_CLIENT_ID);
 
             ctx.getLogger().log("claims: "+claims);
             ctx.getLogger().log("claims: tokenIssuer - "+tokenIssuer);
@@ -71,7 +81,7 @@ public class GroupAuthorizer
             // reject if issuer wrong, not an access token, wrong client_id, or expired
             if (!AuthConstant.ISSUER.equals(tokenIssuer)
                     || !AuthConstant.CLAIM_TOKEN_USE_VALUE.equals(tokenUse)
-                    || !AuthConstant.CLIENT_ID_VALUE.equals(tokenClientId)
+                    || !AuthConstant.CLIENT_ID_VALUE.equals(requestClientId)
                     || new Date().after(expiry)) {
                 ctx.getLogger().log("Token Validation failed");
                 response.put(AuthConstant.IS_AUTHORIZED_KEY, false);
@@ -92,12 +102,12 @@ public class GroupAuthorizer
             boolean allowed = userGroups.stream().anyMatch(ok::contains);
             ctx.getLogger().log("URL: "+key+"; Matrix: "+ok+"; Allowed: "+allowed);
             response.put(AuthConstant.IS_AUTHORIZED_KEY, allowed);
-
         } catch (Exception exception) {
             ctx.getLogger().log("Auth failure: " + exception.getMessage());
             response.put(AuthConstant.IS_AUTHORIZED_KEY, false);
         }
         return response;
     }
+
 }
 

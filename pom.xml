@@ -13,6 +13,9 @@
     <modules>
         <module>auth-lambda</module>
         <module>rate-lambda</module>
+        <module>FXFileUpload-lambda</module>
+
+
     </modules>
 
     <properties>

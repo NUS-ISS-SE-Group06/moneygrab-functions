@@ -22,8 +22,9 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      - name: Build auth-lambda JAR
-        run: mvn clean package -pl auth-lambda -am -DskipTests
+      - name: Install & build full Maven project
+        # Installs your parent POM and all modules into ~/.m2
+        run: mvn clean install -DskipTests
 
       - name: Install AWS SAM CLI
         uses: aws-actions/setup-sam@v2
@@ -33,8 +34,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          # replace with your GitHub-OIDC–IAM role
-          role-to-assume: arn:aws:iam::123456789012:role/GithubActionsDeployRole
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-southeast-1
 
       - name: SAM build & deploy
@@ -46,4 +47,6 @@ jobs:
             --template-file .aws-sam/build/template.yaml \
             --stack-name moneygrab-auth-stack \
             --no-confirm-changeset \
-            --capabilities CAPABILITY_IAM
+            --capabilities CAPABILITY_IAM \
+            --s3-bucket moneygrab-codedeploy-artifacts \
+            --s3-prefix moneygrab-functions
