@@ -30,5 +30,3 @@ hs_err_pid*
 replay_pid*
 
 *.iml
-
-dependency-reduced-pom.xml

@@ -33,6 +33,9 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <junit-jupiter.version>5.13.1</junit-jupiter.version>
         <mockito.version>5.18.0</mockito.version>
+        <jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
+        <jackson-databind.version>2.17.1</jackson-databind.version>
+        <junit-jupiter.version>5.10.2</junit-jupiter.version>
     </properties>
 
     <dependencyManagement>
@@ -71,6 +74,25 @@
                 <artifactId>lombok</artifactId>
                 <optional>true</optional>
                 <version>${lombok.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>jakarta.persistence</groupId>
+                <artifactId>jakarta.persistence-api</artifactId>
+                <version>${jakarta.persistence-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson-databind.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${junit-jupiter.version}</version>
+                <scope>test</scope>
             </dependency>
 
         </dependencies>

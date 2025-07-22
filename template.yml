@@ -20,7 +20,20 @@ Resources:
       CodeUri: auth-lambda/
       Role: arn:aws:iam::797226340575:role/lambda-jwt-authorizer-role
 
+  RateLambdaFunction:
+    Type: AWS::Serverless::Function
+    DeletionPolicy: Delete
+    Properties:
+      FunctionName: RateComputeHandler
+      Handler: com.moola.fx.moneychanger.rate.functions.RateHandler::handleRequest
+      CodeUri: rate-lambda/target/rate-lambda-1.0.0-SNAPSHOT-shaded.jar
+      Role: arn:aws:iam::797226340575:role/lambda-jwt-authorizer-role
+
 Outputs:
   AuthLambdaArn:
     Description: ARN of the Auth Lambda
     Value: !GetAtt AuthLambdaFunction.Arn
+
+  RateLambdaArn:
+    Description: ARN of the Rate Lambda
+    Value: !GetAtt RateLambdaFunction.Arn
