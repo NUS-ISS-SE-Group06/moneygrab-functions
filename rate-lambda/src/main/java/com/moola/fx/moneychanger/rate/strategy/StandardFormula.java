@@ -4,9 +4,12 @@ import com.moola.fx.moneychanger.rate.dto.BasicRate;
 import com.moola.fx.moneychanger.rate.dto.ComputedRate;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 public class StandardFormula implements RateCalculationStrategy {
+    private static final int CALCULATION_SCALE = 15;
+
     @Override
     public List<ComputedRate> compute(List<BasicRate> basicRates) {
         return basicRates.stream()
@@ -17,22 +20,79 @@ public class StandardFormula implements RateCalculationStrategy {
     private ComputedRate computeSingle(BasicRate basicRate) {
         ComputedRate result = new ComputedRate();
 
+        result.setMoneyChangerId(basicRate.getMoneyChangerId());
         result.setCurrencyCode(basicRate.getCurrencyCode());
         result.setUnit(basicRate.getUnit());
         result.setRawBid(basicRate.getRawBid());
         result.setRawAsk(basicRate.getRawAsk());
+        result.setSpread(basicRate.getSpread());
+        result.setSkew(basicRate.getSkew());
+        result.setRefBid(basicRate.getRefBid());
+        result.setRefAsk(basicRate.getRefAsk());
+        result.setDpBid(basicRate.getDpBid());
+        result.setDpAsk(basicRate.getDpAsk());
+        result.setMarBid(basicRate.getMarBid());
+        result.setMarAsk(basicRate.getMarAsk());
+        result.setCfBid(basicRate.getCfBid());
+        result.setCfAsk(basicRate.getCfAsk());
 
-        BigDecimal spread = basicRate.getRawAsk().subtract(basicRate.getRawBid());
-        result.setSpread(spread);
+        // avg=(rawBid+rawAsk)/2
+        BigDecimal avgRawBidAsk = (basicRate.getRawBid()
+                .add(basicRate.getRawAsk()))
+                .divide(BigDecimal.valueOf(2),CALCULATION_SCALE, RoundingMode.HALF_UP);
 
-        BigDecimal skew = spread.multiply(BigDecimal.valueOf(0.1));
-        result.setSkew(skew);
+        // wsBid = avg + skew - (spread/2)
+        BigDecimal wsBid= avgRawBidAsk
+                .add(basicRate.getSkew())
+                .subtract(basicRate.getSpread().divide(BigDecimal.valueOf(2), CALCULATION_SCALE, RoundingMode.HALF_UP));
+        result.setWsBid(wsBid);
 
-        result.setWsBid(basicRate.getRawBid().subtract(skew));
-        result.setWsAsk(basicRate.getRawAsk().add(skew));
+        // wsAsk = avg + skew + (spread/2)
+        BigDecimal wsAsk= avgRawBidAsk
+                .add(basicRate.getSkew()).
+                add(basicRate.getSpread().divide(BigDecimal.valueOf(2), CALCULATION_SCALE, RoundingMode.HALF_UP));
+        result.setWsAsk(wsAsk);
 
-        result.setRefBid(result.getWsBid());
-        result.setRefAsk(result.getWsAsk());
+
+        //(1-marBid/100)*wsBid
+        BigDecimal computedBid= (BigDecimal.ONE
+                .subtract(basicRate.getMarBid().divide(BigDecimal.valueOf(100),CALCULATION_SCALE,RoundingMode.HALF_UP))
+                .multiply(wsBid));
+
+        if (BigDecimal.ZERO.equals(basicRate.getRefBid())) {
+            // (1-marBid/100)*wsBid  --> round to dpBid  --> min (result, cfBid)
+            BigDecimal rtBid = computedBid
+                    .setScale(basicRate.getDpBid().intValue(),RoundingMode.HALF_UP)
+                    .min(basicRate.getCfBid());
+            result.setRtBid(rtBid);
+        } else {
+            // 1/ ((1-marBid/100)*wsBid)  --> round to dpBid  --> max(result, cfBid)
+            BigDecimal rtBid = BigDecimal.ONE
+                    .divide(computedBid, CALCULATION_SCALE, RoundingMode.HALF_UP)
+                    .setScale(basicRate.getDpBid().intValue(),RoundingMode.HALF_UP)
+                    .max(basicRate.getCfBid());
+            result.setRtBid(rtBid);
+        }
+
+        // (1+marAsk/100)*wsAsk
+        BigDecimal computedAsk= (BigDecimal.ONE
+                .add(basicRate.getMarAsk().divide(BigDecimal.valueOf(100), CALCULATION_SCALE, RoundingMode.HALF_UP)))
+                .multiply(wsAsk);
+
+        if (BigDecimal.ZERO.equals(basicRate.getRefAsk())) {
+            // (1+marAsk/100)*wsAsk  --> round to dpAsk  --> max (result, cfAsk)
+            BigDecimal rtAsk = computedAsk
+                    .setScale(basicRate.getDpAsk().intValue(),RoundingMode.HALF_UP)
+                    .max(basicRate.getCfAsk());
+            result.setRtAsk(rtAsk);
+        } else {
+            // 1/ ((1+marAsk/100)*wsAsk)  --> round to dpAsk  --> min (result, cfAsk)
+            BigDecimal rtAsk = BigDecimal.ONE
+                    .divide(computedAsk, CALCULATION_SCALE, RoundingMode.HALF_UP)
+                    .setScale(basicRate.getDpAsk().intValue(), RoundingMode.HALF_UP)
+                    .min(basicRate.getCfAsk());
+            result.setRtAsk(rtAsk);
+        }
 
         return result;
     }

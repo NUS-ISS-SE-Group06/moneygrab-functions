@@ -25,20 +25,30 @@ class RateHandlerTest {
     @BeforeEach
     void setup() {
         handler = new RateHandler();
-        mockContext = null; // Not used in logic
+        mockContext = null; // Context not used
     }
 
     @Test
     void testHandleRequest_validPost_standardMethod() throws Exception {
         // Given
         BasicRate basicRate = new BasicRate();
+        basicRate.setMoneyChangerId(1L);
         basicRate.setCurrencyCode("USD");
+        basicRate.setUnit("1");
         basicRate.setRawBid(BigDecimal.valueOf(1.00));
         basicRate.setRawAsk(BigDecimal.valueOf(1.20));
-        basicRate.setUnit("1");
+        basicRate.setSpread(BigDecimal.valueOf(0.20));
+        basicRate.setSkew(BigDecimal.ZERO);
+        basicRate.setRefBid(BigDecimal.ZERO);
+        basicRate.setRefAsk(BigDecimal.ZERO);
+        basicRate.setDpBid(BigDecimal.valueOf(4));
+        basicRate.setDpAsk(BigDecimal.valueOf(4));
+        basicRate.setMarBid(BigDecimal.valueOf(0.5));
+        basicRate.setMarAsk(BigDecimal.valueOf(0.5));
+        basicRate.setCfBid(BigDecimal.valueOf(1.05));
+        basicRate.setCfAsk(BigDecimal.valueOf(1.10));
 
         String body = objectMapper.writeValueAsString(List.of(basicRate));
-
         APIGatewayProxyRequestEvent request = new APIGatewayProxyRequestEvent()
                 .withHttpMethod("POST")
                 .withQueryStringParameters(Map.of("method", "standard"))
@@ -48,16 +58,27 @@ class RateHandlerTest {
         APIGatewayProxyResponseEvent response = handler.handleRequest(request, mockContext);
 
         // Then
-        assertEquals(200, response.getStatusCode());
+        assertEquals(200, response.getStatusCode(), "Expected status 200 for valid request");
+
         List<ComputedRate> computedRates = objectMapper.readValue(response.getBody(), new TypeReference<>() {});
-        assertEquals(1, computedRates.size());
+        assertEquals(1, computedRates.size(), "Expected one computed rate");
 
         ComputedRate result = computedRates.getFirst();
         assertEquals("USD", result.getCurrencyCode());
+        assertEquals(1L, result.getMoneyChangerId());
+
+        // Check formula outputs
         assertEquals(BigDecimal.valueOf(0.20), result.getSpread());
-        assertNotNull(result.getSkew());
-        assertNotNull(result.getWsBid());
-        assertNotNull(result.getWsAsk());
+        assertEquals(BigDecimal.ZERO, result.getSkew());
+
+        assertNotNull(result.getWsBid(), "wsBid should be calculated");
+        assertNotNull(result.getWsAsk(), "wsAsk should be calculated");
+        assertNotNull(result.getRtBid(), "rtBid should be calculated");
+        assertNotNull(result.getRtAsk(), "rtAsk should be calculated");
+
+        // Optionally, log values for debugging
+        System.out.printf("wsBid: %s, wsAsk: %s, rtBid: %s, rtAsk: %s%n",
+                result.getWsBid(), result.getWsAsk(), result.getRtBid(), result.getRtAsk());
     }
 
     @Test
