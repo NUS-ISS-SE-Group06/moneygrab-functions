@@ -3,5 +3,9 @@
     "queryStringParameters": {
         "method": "standard"
     },
-    "body": "[{\"currencyCode\":\"USD\",\"moneyChangerId\":123,\"unit\":\"1\",\"tradeType\":\"BUY_SELL\",\"tradeDeno\":\"ALL\",\"tradeRound\":2,\"rawBid\":1.0,\"rawAsk\":1.2,\"spread\":0.001,\"skew\":0.001,\"wsBid\":0,\"wsAsk\":0,\"refBid\":1,\"dpBid\":1,\"marBid\":1,\"cfBid\":1,\"rtBid\":1,\"refAsk\":1,\"dpAsk\":1,\"marAsk\":1,\"cfAsk\":1,\"rtAsk\":1,\"processedAt\":null,\"processedBy\":1001}]"
+    "body": "[ { \"currencyCode\": \"JPY\",\"moneyChangerId\": 12,\"unit\": \"1000\",\"tradeType\": \"BUY_SELL\",\"tradeDeno\": \"ALL\",\"tradeRound\": 2,\"rawBid\": 0.0086709165,\"rawAsk\": 0.0086724642,\"spread\": 0.1,\"skew\": 0,\"wsBid\": 0,\"wsAsk\": 0,\"refBid\": 0,\"dpBid\": 3,\"marBid\": 1.00,\"cfBid\": 8.67,\"rtBid\": 0,\"refAsk\": 1,\"dpAsk\": 4,\"marAsk\": 0.2,\"cfAsk\": 0.115,\"rtAsk\": 0,\"processedAt\": null,\"processedBy\": 1}]"
 }
+
+
+
+
