@@ -97,7 +97,7 @@ jobs:
 
   lambda_test:
     name: Run Local Lambda
-    needs: test_build
+    needs: code_scan
     runs-on: ubuntu-latest
     if: always()
 
@@ -116,6 +116,9 @@ jobs:
       - name: Install AWS SAM CLI
         run: |
           pip install aws-sam-cli
+
+      - name: Build and install full Maven project (for parent POM)
+        run: mvn clean install -DskipTests
 
       - name: Validate SAM Template
         run: sam validate --region us-east-1
