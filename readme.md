@@ -25,10 +25,10 @@ This policy provides basic Lambda execution permissions such as writing logs to 
 
 ## How to Compile
 
-To compile the code for a specific Lambda function, use the following Maven command. For example, to build the `auth-lambda`:
+To compile the code for a specific Lambda function, use the following Maven command. 
 
 ```bash
-mvn clean package -pl <lambda-module>
+# mvn clean package -pl <lambda-module>
 
 mvn clean package -pl auth-lambda
 mvn clean package -pl FXFileUpload-lambda
@@ -74,6 +74,9 @@ After successfully building your Lambda using the AWS SAM CLI, you can test it l
 # sam local invoke <Resources-Name-In-Template-yml> --template .aws-sam/build/template.yaml --event /resources/event.json
 
 sam local invoke RateLambdaFunction --template .aws-sam/build/template.yaml --event resources/sample-rate-lambda-event.json 
+
+sam local invoke AuthLambdaFunction --template .aws-sam/build/template.yaml --event resources/sample-auth-lambda-event.json 
+
 
 ```
 
