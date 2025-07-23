@@ -96,7 +96,7 @@ jobs:
         run: mvn -B test
 
   lambda_test:
-    name: Local Integration Test using SAM
+    name: Local Integration Test
     needs: code_scan
     runs-on: ubuntu-latest
     if: always()
@@ -131,6 +131,16 @@ jobs:
           sam local invoke RateLambdaFunction \
             --template .aws-sam/build/template.yaml \
             --event resources/sample-rate-lambda-event.json
+
+      - name: Build SAM Project (AuthLambdaFunction)
+        run: sam build AuthLambdaFunction
+
+#      - name: Run AuthLambdaFunction
+#        run: |
+#          sam local invoke AuthLambdaFunction \
+#            --template .aws-sam/build/template.yaml \
+#            --event resources/sample-auth-lambda-event.json
+
 
   code_scan:
     name: Code Quality Scan
