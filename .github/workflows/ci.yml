@@ -118,7 +118,7 @@ jobs:
           pip install aws-sam-cli
 
       - name: Validate SAM Template
-        run: sam validate
+        run: sam validate --region us-east-1
 
       - name: Build All SAM Project
         run: sam build
