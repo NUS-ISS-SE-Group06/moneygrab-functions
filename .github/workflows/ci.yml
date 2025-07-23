@@ -96,7 +96,7 @@ jobs:
         run: mvn -B test
 
   lambda_test:
-    name: Run Local Lambda
+    name: Local Integration Test using SAM
     needs: code_scan
     runs-on: ubuntu-latest
     if: always()
