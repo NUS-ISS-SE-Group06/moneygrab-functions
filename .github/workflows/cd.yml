@@ -1,18 +1,39 @@
-name: CD — Auth Lambda
+name: CD — Moneygrab Lambda
 
 on:
   push:
     branches: [ main ]
-    # only run when auth-lambda code or the SAM template changes
+    # only run when lambda code or the SAM template changes
     paths:
       - 'auth-lambda/**'
-      - 'template.yml'
       - 'rate-lambda/**'
+      - 'template.yml'
       - 'rate-template.yml'
 
 jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      auth_changed: ${{ steps.filter.outputs.auth }}
+      rate_changed: ${{ steps.filter.outputs.rate }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect changed files
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            auth:
+              - 'auth-lambda/**'
+              - 'template.yml'
+            rate:
+              - 'rate-lambda/**'
+              - 'rate-template.yml'
+
   deploy-auth-lambda:
-    if: github.event.head_commit.message != 'skip auth'
+    needs: detect-changes
+    if: needs.detect-changes.outputs.auth_changed == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -55,7 +76,8 @@ jobs:
             --s3-prefix moneygrab-functions
 
   deploy-rate-lambda:
-    if: github.event.head_commit.message != 'skip rate'
+    needs: detect-changes
+    if: needs.detect-changes.outputs.rate_changed == 'true'
     runs-on: ubuntu-latest
 
     steps:
