@@ -120,8 +120,8 @@ jobs:
       - name: Validate SAM Template
         run: sam validate --region us-east-1
 
-      - name: Build All SAM Project
-        run: sam build
+      - name: Build SAM Project (RateLambdaFunction)
+        run: sam build RateLambdaFunction
 
       - name: Run RateLambdaFunction
         run: |
