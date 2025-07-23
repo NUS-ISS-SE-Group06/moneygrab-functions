@@ -110,8 +110,8 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Set up Docker
-        uses: docker-practice/actions-setup-docker@v1
+      - name: Verify Docker Version (already pre-installed)
+        run: docker --version
 
       - name: Install AWS SAM CLI
         run: |
