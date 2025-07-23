@@ -121,26 +121,14 @@ jobs:
         run: mvn clean install -DskipTests
 
       - name: Validate SAM Template
-        run: sam validate --region us-east-1
+        run: sam validate --region ap-southeast-1
 
-      - name: Build SAM Project (RateLambdaFunction)
-        run: sam build RateLambdaFunction
-
-      - name: Run RateLambdaFunction
+      - name: Build and Run - RateLambdaFunction
         run: |
+          sam build --template-file rate-template.yml
           sam local invoke RateLambdaFunction \
             --template .aws-sam/build/template.yaml \
             --event resources/sample-rate-lambda-event.json
-
-      - name: Build SAM Project (AuthLambdaFunction)
-        run: sam build AuthLambdaFunction
-
-#      - name: Run AuthLambdaFunction
-#        run: |
-#          sam local invoke AuthLambdaFunction \
-#            --template .aws-sam/build/template.yaml \
-#            --event resources/sample-auth-lambda-event.json
-
 
   code_scan:
     name: Code Quality Scan

@@ -1,4 +1,3 @@
-# template.yml
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: MoneyGrab Mono-Repo Lambda Functions
@@ -10,17 +9,16 @@ Globals:
     MemorySize: 512
 
 Resources:
-  AuthLambdaFunction:
+  RateLambdaFunction:
     Type: AWS::Serverless::Function
     DeletionPolicy: Delete
     Properties:
-      FunctionName: moneygrab-groupAuthorizer
-      Runtime: java21
-      Handler: com.moola.fx.moneychanger.auth.functions.MoneyGrabGroupAuthorizer::handleRequest
-      CodeUri: auth-lambda/
+      FunctionName: RateComputeHandler
+      Handler: com.moola.fx.moneychanger.rate.functions.RateHandler::handleRequest
+      CodeUri: rate-lambda/
       Role: arn:aws:iam::797226340575:role/lambda-jwt-authorizer-role
 
 Outputs:
-  AuthLambdaArn:
-    Description: ARN of the Auth Lambda
-    Value: !GetAtt AuthLambdaFunction.Arn
+  RateLambdaArn:
+    Description: ARN of the Rate Lambda
+    Value: !GetAtt RateLambdaFunction.Arn

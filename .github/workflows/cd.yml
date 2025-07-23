@@ -7,9 +7,12 @@ on:
     paths:
       - 'auth-lambda/**'
       - 'template.yml'
+      - 'rate-lambda/**'
+      - 'rate-template.yml'
 
 jobs:
   deploy-auth-lambda:
+    if: github.event.head_commit.message != 'skip auth'
     runs-on: ubuntu-latest
 
     steps:
@@ -50,3 +53,46 @@ jobs:
             --capabilities CAPABILITY_IAM \
             --s3-bucket moneygrab-codedeploy-artifacts \
             --s3-prefix moneygrab-functions
+
+  deploy-rate-lambda:
+    if: github.event.head_commit.message != 'skip rate'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build with Maven
+        run: mvn clean install -DskipTests
+
+      - name: Install AWS SAM CLI
+        run: |
+          pip install aws-sam-cli
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-1
+
+      - name: Validate SAM Template
+        run: sam validate --region ap-southeast-1
+
+      - name: Build and Deploy RateLambdaFunction
+        run: |
+          sam build --template-file rate-template.yml
+          sam deploy \
+            --template-file .aws-sam/build/template.yaml \
+            --stack-name moneygrab-rate-stack \
+            --no-confirm-changeset \
+            --capabilities CAPABILITY_IAM \
+            --s3-bucket moneygrab-codedeploy-artifacts \
+            --s3-prefix moneygrab-functions
+
