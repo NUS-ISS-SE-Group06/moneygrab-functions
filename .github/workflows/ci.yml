@@ -40,7 +40,7 @@ jobs:
         with:
           path: |
             ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }} clea
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
       - name: Build Project
@@ -94,6 +94,41 @@ jobs:
 
       - name: Run Unit Test
         run: mvn -B test
+
+  lambda_test:
+    name: Local Integration Test
+    needs: code_scan
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Verify Docker Version (already pre-installed)
+        run: docker --version
+
+      - name: Install AWS SAM CLI
+        run: |
+          pip install aws-sam-cli
+
+      - name: Build and install full Maven project (for parent POM)
+        run: mvn clean install -DskipTests
+
+      - name: Validate SAM Template
+        run: sam validate --region ap-southeast-1
+
+      - name: Build and Run - RateLambdaFunction
+        run: |
+          sam build --template-file rate-template.yml
+          sam local invoke RateLambdaFunction \
+            --template .aws-sam/build/template.yaml \
+            --event resources/sample-rate-lambda-event.json
 
   code_scan:
     name: Code Quality Scan
