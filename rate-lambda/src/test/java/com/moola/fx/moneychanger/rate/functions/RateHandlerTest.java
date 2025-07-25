@@ -165,7 +165,7 @@ class RateHandlerTest {
         assertEquals(BigDecimal.valueOf(0.2), result.getMarAsk());
         assertEquals(BigDecimal.valueOf(8.67), result.getCfBid());
         assertEquals(BigDecimal.valueOf(0.115), result.getCfAsk());
-        assertNotNull(result.getProcessedAt());
+        assertNotNull(result.getProcessedAt()); 
         assertEquals(1, result.getProcessedBy());
 
         assertEquals(BigDecimal.valueOf(8.670917), result.getRawBid());
