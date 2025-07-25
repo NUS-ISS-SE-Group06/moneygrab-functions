@@ -60,7 +60,7 @@ moneygrab-functions/
 ├── .aws-sam/
 │   └── build/
 │       ├── RateLambdaFunction/
-│       └── rate-template.yaml
+│       └── template.yaml
 ```
 
 ## How to Invoke Lambda Locally with SAM

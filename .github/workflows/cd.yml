@@ -74,6 +74,8 @@ jobs:
             --capabilities CAPABILITY_IAM \
             --s3-bucket moneygrab-codedeploy-artifacts \
             --s3-prefix moneygrab-functions
+            --no-fail-on-empty-changeset 
+          
 
   deploy-rate-lambda:
     needs: detect-changes
@@ -117,4 +119,5 @@ jobs:
             --capabilities CAPABILITY_IAM \
             --s3-bucket moneygrab-codedeploy-artifacts \
             --s3-prefix moneygrab-functions
+            --no-fail-on-empty-changeset 
 
