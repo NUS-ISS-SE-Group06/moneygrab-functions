@@ -7,7 +7,7 @@ on:
     paths:
       - 'auth-lambda/**'
       - 'rate-lambda/**'
-      - 'template.yml'
+      - 'auth-template.yml'
       - 'rate-template.yml'
 
 jobs:
@@ -65,7 +65,7 @@ jobs:
       - name: SAM build & deploy
         run: |
           sam build \
-            --template-file template.yml \
+            --template-file auth-template.yml \
             --build-dir .aws-sam/build
           sam deploy \
             --template-file .aws-sam/build/template.yaml \
