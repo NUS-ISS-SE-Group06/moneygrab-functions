@@ -7,7 +7,7 @@ on:
     paths:
       - 'auth-lambda/**'
       - 'rate-lambda/**'
-      - 'template.yml'
+      - 'auth-template.yml'
       - 'rate-template.yml'
 
 jobs:
@@ -65,7 +65,7 @@ jobs:
       - name: SAM build & deploy
         run: |
           sam build \
-            --template-file template.yml \
+            --template-file auth-template.yml \
             --build-dir .aws-sam/build
           sam deploy \
             --template-file .aws-sam/build/template.yaml \
@@ -73,7 +73,7 @@ jobs:
             --no-confirm-changeset \
             --capabilities CAPABILITY_IAM \
             --s3-bucket moneygrab-codedeploy-artifacts \
-            --s3-prefix moneygrab-functions
+            --s3-prefix moneygrab-functions \
             --no-fail-on-empty-changeset 
           
 
@@ -106,8 +106,17 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-southeast-1
 
-      - name: Validate SAM Template
-        run: sam validate --region ap-southeast-1
+      - name: Validate SAM Templates
+        run: |
+          # validate the auth stack
+          sam validate \
+            --template-file auth-template.yml \
+            --region ap-southeast-1
+          
+          # validate the rate stack
+          sam validate \
+            --template-file rate-template.yml \
+            --region ap-southeast-1
 
       - name: Build and Deploy RateLambdaFunction
         run: |
@@ -118,6 +127,6 @@ jobs:
             --no-confirm-changeset \
             --capabilities CAPABILITY_IAM \
             --s3-bucket moneygrab-codedeploy-artifacts \
-            --s3-prefix moneygrab-functions
+            --s3-prefix moneygrab-functions \
             --no-fail-on-empty-changeset 
 

@@ -120,8 +120,17 @@ jobs:
       - name: Build and install full Maven project (for parent POM)
         run: mvn clean install -DskipTests
 
-      - name: Validate SAM Template
-        run: sam validate --region ap-southeast-1
+      - name: Validate SAM Templates
+        run: |
+          # validate the auth stack
+          sam validate \
+            --template-file auth-template.yml \
+            --region ap-southeast-1
+      
+          # validate the rate stack
+          sam validate \
+            --template-file rate-template.yml \
+            --region ap-southeast-1
 
       - name: Build and Run - RateLambdaFunction
         run: |
